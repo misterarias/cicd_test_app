@@ -2,10 +2,14 @@
 pipeline {
     stages {
         stage('Checkout code') {
-            checkout scm
+            steps {
+                checkout scm
+            }
         }
         stage('Build & test') {
-            sh "./mvnw test"
+            step {
+                sh "./mvnw test"
+            }
         }
     }
 }
