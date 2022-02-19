@@ -9,9 +9,14 @@ pipeline {
                 checkout scm
             }
         }
-        stage('Build & test') {
+        stage('Run tests') {
             steps {
                 sh "./mvnw test"
+            }
+        }
+        stage('Build package') {
+            steps {
+                sh "./mvnw package -DskipTests=true"
             }
         }
         stage('Build Image') {
