@@ -30,7 +30,7 @@ pipeline {
                     usernamePassword(
                         credentialsId: 'dockerhub-credentials',
                         usernameVariable: 'DOCKER_USR',
-                        passwordVariable: 'DOCKER_PSW)
+                        passwordVariable: 'DOCKER_PSW')
                 ]) {
                     sh """
                     docker login -u ${DOCKER_USR} -p ${DOCKER_PSW}
