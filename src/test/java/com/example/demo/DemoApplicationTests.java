@@ -1,34 +1,29 @@
 package com.example.demo;
 
-import com.example.demo.controllers.LoginController;
-import com.example.demo.controllers.UsuarioController;
 import com.example.demo.entities.Usuario;
 import com.example.demo.repositories.UsuarioRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DemoApplicationTests {
 
     @Autowired
-    UsuarioController userController;
-
-    @Autowired
-    LoginController loginController;
-
-    @Autowired
     UsuarioRepository repository;
+    @Autowired
+    private MockMvc mockMvc;
 
     @BeforeEach
     public void init() {
@@ -38,21 +33,52 @@ class DemoApplicationTests {
     }
 
     @Test
-    void testLogin() {
-        ResponseEntity<Usuario> response = loginController.login(
-                new LoginController.LoginUserPayload("juan", "123456")
-        );
-        assertEquals(
-                response.getHeaders().getFirst("X-Login-Token"),
-                repository.findByName("juan").getLoginToken()
+    void testCorrectLogin() throws Exception {
+        mockMvc.perform(
+                post("/login")
+                        .contentType("application/json")
+                        .content("{\"name\": \"juan\", \"password\": \"123456\"}")
+        ).andExpect(
+                status().isOk()
+        ).andExpect(
+                header().string("X-Login-Token", repository.findByName("juan").getLoginToken() )
         );
     }
 
     @Test
-    void testGetUsuarios() {
-        assertEquals(
-                userController.getUsuarios().stream().map(Usuario::getName).collect(Collectors.toList()),
-                List.of(new String[]{"juan", "jorge"})
+    void testUnknownUserLogin() throws Exception {
+        mockMvc.perform(
+                post("/login")
+                        .contentType("application/json")
+                        .content("{\"name\": \"manolo\", \"password\": \"123\"}")
+        ).andExpect(
+                status().is(401)
+        ).andExpect(
+                header().doesNotExist("X-Login-Token")
+        );
+    }
+
+    @Test
+    void testInvalidPasswordLogin() throws Exception {
+        mockMvc.perform(
+                post("/login")
+                        .contentType("application/json")
+                        .content("{\"name\": \"juan\", \"password\": \"123\"}")
+        ).andExpect(
+                status().is(401)
+        ).andExpect(
+                header().doesNotExist("X-Login-Token")
+        );
+    }
+
+    @Test
+    void testGetUsuarios() throws Exception {
+        mockMvc.perform(
+                get("/usuarios")
+        ).andExpect(
+                status().isOk()
+        ).andExpect(
+                content().json("[\"juan\",\"jorge\"]")
         );
     }
 }

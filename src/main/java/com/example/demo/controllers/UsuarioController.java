@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -14,15 +15,15 @@ public class UsuarioController {
 
     private static final Logger log = LoggerFactory.getLogger(UsuarioController.class);
 
-    private final UsuarioRepository repository ;
+    private final UsuarioRepository repository;
 
     public UsuarioController(UsuarioRepository repository) {
         this.repository = repository;
     }
 
     @GetMapping
-    public List<Usuario> getUsuarios() {
-        return repository.findAll();
+    public List<String> getUsuarios() {
+        return repository.findAll().stream().map(Usuario::getName).collect(Collectors.toList());
     }
 
     @PostMapping

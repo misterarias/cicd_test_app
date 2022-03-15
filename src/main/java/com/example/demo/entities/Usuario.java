@@ -40,10 +40,6 @@ public class Usuario {
         return this.name;
     }
 
-    public Long getId() {
-        return this.id;
-    }
-
     public String doLogin() {
         lastLogin = new Date();
         loginToken = new RandomString().nextString();
