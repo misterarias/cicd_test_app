@@ -1,7 +1,6 @@
 package com.example.demo.controllers;
 
 import com.example.demo.entities.Usuario;
-import com.example.demo.entities.UsuarioLogin;
 import com.example.demo.exceptions.InvalidLoginException;
 import com.example.demo.repositories.UsuarioRepository;
 import org.slf4j.Logger;
@@ -44,13 +43,11 @@ public class LoginController {
             throw new InvalidLoginException();
         }
 
-        UsuarioLogin newLogin = new UsuarioLogin(currentUser);
-        currentUser.setUserLogin(newLogin);
+        String token = currentUser.doLogin();
         repository.save(currentUser);
-        repository.flush();
 
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("X-Login-Token", newLogin.getLoginToken());
+        responseHeaders.set("X-Login-Token", token);
         return ResponseEntity.ok().
                 headers(responseHeaders).body(currentUser);
     }

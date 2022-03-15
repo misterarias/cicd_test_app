@@ -1,18 +1,21 @@
 package com.example.demo.entities;
 
+import net.bytebuddy.utility.RandomString;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import java.util.Date;
 
 @Entity
 public class Usuario {
-    private @Id @GeneratedValue Long id;
+    private @Id
+    @GeneratedValue
+    Long id;
     private String name;
     private int password;
-
-    @OneToOne
-    private UsuarioLogin userLogin ;
+    private Date lastLogin;
+    private String loginToken;
 
     public Usuario() {
     }
@@ -20,7 +23,8 @@ public class Usuario {
     public Usuario(String name, String password) {
         this.name = name;
         this.password = password.hashCode();
-        this.userLogin = null;
+        lastLogin = null;
+        loginToken = null;
     }
 
     public Boolean checkPassword(String password) {
@@ -40,11 +44,19 @@ public class Usuario {
         return this.id;
     }
 
-    public void setUserLogin(UsuarioLogin userLogin) {
-        this.userLogin = userLogin;
+    public String doLogin() {
+        lastLogin = new Date();
+        loginToken = new RandomString().nextString();
+        return loginToken;
     }
 
-    public UsuarioLogin getUserLogin() {
-        return userLogin;
+    public Boolean checkLogin(String token) {
+        boolean tokenIsValid = token.equals(this.loginToken);
+        long loginAgeInSeconds = (new Date().getTime() - this.lastLogin.getTime()) / 1000;
+        return tokenIsValid && loginAgeInSeconds < 60; // One minute
+    }
+
+    public String getLoginToken() {
+        return this.loginToken;
     }
 }

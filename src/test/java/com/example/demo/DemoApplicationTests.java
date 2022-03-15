@@ -28,11 +28,12 @@ class DemoApplicationTests {
 
     @Test
     void testLogin() {
-        Usuario user = repository.findByName("Bilbo Baggins");
-        ResponseEntity<Usuario> response = loginController.login(new LoginController.LoginUserPayload(user.getName(), "1234"));
+        ResponseEntity<Usuario> response = loginController.login(
+                new LoginController.LoginUserPayload("Bilbo Baggins", "1234")
+        );
         assertEquals(
-                response.getHeaders().get("X-Login-Token").get(0),
-                user.getUserLogin().getLoginToken()
+                response.getHeaders().getFirst("X-Login-Token"),
+                repository.findByName("Bilbo Baggins").getLoginToken()
         );
     }
 
