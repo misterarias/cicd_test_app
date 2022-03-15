@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.entities.Usuario;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
