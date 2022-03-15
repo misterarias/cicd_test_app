@@ -35,11 +35,10 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<Usuario> login(@RequestBody LoginUserPayload usuarioLogin) {
 
-        log.info("Received data = " + usuarioLogin);
         Usuario currentUser = repository.findByName(usuarioLogin.name);
-        log.info("Found person: " + currentUser);
+        log.debug("Found person: " + currentUser);
 
-        if (currentUser == null || currentUser.checkPassword(usuarioLogin.password)) {
+        if (currentUser == null || !currentUser.checkPassword(usuarioLogin.password)) {
             throw new InvalidLoginException();
         }
 
