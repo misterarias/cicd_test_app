@@ -1,0 +1,23 @@
+---
+name: AWS S3 List Buckets
+
+on: [workflow_dispatch]
+
+jobs:
+  list-s3-buckets:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE }}
+          role-session-name: GitHubActions
+          aws-region: 
+
+      - name: Get current buckets
+        run: |
+          aws s3 ls
