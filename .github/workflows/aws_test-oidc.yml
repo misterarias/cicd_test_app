@@ -1,5 +1,5 @@
 ---
-name: AWS S3 List Buckets
+name: AWS OIDC List Buckets 
 
 on: [workflow_dispatch]
 
