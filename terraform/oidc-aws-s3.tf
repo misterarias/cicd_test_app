@@ -20,7 +20,7 @@ resource "aws_iam_role" "github_actions" {
         Condition = {
           StringEquals = {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-            "token.actions.githubusercontent.com:sub" = "repo:YOUR_ORG/YOUR_REPO:ref:refs/heads/main"
+            "token.actions.githubusercontent.com:sub" = "repo:github.com/misterarias/cicd_test_app"
           }
         }
       }
@@ -44,4 +44,12 @@ resource "aws_iam_role_policy" "github_actions_s3" {
       }
     ]
   })
+}
+
+
+# Outputs
+output "github_actions_role_arn" {
+  description = "ARN of the IAM role for GitHub Actions"
+  value       = aws_iam_role.github_actions.arn
+  sensitive   = false
 }
