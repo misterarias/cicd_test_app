@@ -1,0 +1,35 @@
+---
+name: AWS S3 List Buckets
+
+on:
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  list-s3-buckets:
+    runs-on: ubuntu-latest
+    
+    # Use the same Docker image as Jenkins
+    #container:
+    #  image: amazon/aws-cli:latest
+    #  options: --entrypoint=""
+    
+    # Grant GITHUB_TOKEN write permissions for OIDC
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+      #- name: Configure AWS credentials
+      #  uses: aws-actions/configure-aws-credentials@v4
+      #  with:
+      #    role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+      #    role-session-name: GitHubActions
+      #    aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      
+      - name: Get current buckets
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws s3 ls
