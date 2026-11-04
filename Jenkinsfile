@@ -11,12 +11,12 @@ pipeline {
         }
         stage('Run tests') {
             steps {
-                sh "./mvnw test"
+                sh "mvn test"
             }
         }
         stage('Build package') {
             steps {
-                sh "./mvnw package -DskipTests=true"
+                sh "mvn package -DskipTests=true"
             }
         }
         stage('Build Image') {
